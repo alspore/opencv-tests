@@ -7,28 +7,29 @@ def nothing(test):
     pass
 
 cam = cv2.VideoCapture(0)
-cv2.namedWindow('hsv', cv2.CV_WINDOW_AUTOSIZE)
-cv2.namedWindow('raw', cv2.CV_WINDOW_AUTOSIZE)
-cv2.namedWindow('binary', cv2.CV_WINDOW_AUTOSIZE)
 
-cv2.createTrackbar('upper r', 'binary', 0, 255, nothing)
-cv2.createTrackbar('upper g', 'binary', 0, 255, nothing)
-cv2.createTrackbar('upper b', 'binary', 0, 255, nothing)
+windows = ['hsv', 'raw', 'binary', 'sliders']
+for window in windows:
+    cv2.namedWindow(window, cv2.CV_WINDOW_AUTOSIZE)
 
-cv2.createTrackbar('lower r', 'binary', 0, 255, nothing)
-cv2.createTrackbar('lower g', 'binary', 0, 255, nothing)
-cv2.createTrackbar('lower b', 'binary', 0, 255, nothing)
+cv2.createTrackbar('h_max', 'sliders', 0, 255, nothing)
+cv2.createTrackbar('s_max', 'sliders', 0, 255, nothing)
+cv2.createTrackbar('v_max', 'sliders', 0, 255, nothing)
 
-upper = {'r': 0, 'g': 0, 'b': 0}
-lower = {'r': 0, 'g': 0, 'b': 0}
+cv2.createTrackbar('h_min', 'sliders', 0, 255, nothing)
+cv2.createTrackbar('s_min', 'sliders', 0, 255, nothing)
+cv2.createTrackbar('v_min', 'sliders', 0, 255, nothing)
+
+upper = {'h': 0, 's': 0, 'v': 0}
+lower = {'h': 0, 's': 0, 'v': 0}
 
 while True:
 
     for key, val in upper.iteritems():
-        upper[key] = cv2.getTrackbarPos('upper ' + key, 'binary')
+        upper[key] = cv2.getTrackbarPos(key + '_max', 'sliders')
 
     for key, val in lower.iteritems():
-        lower[key] = cv2.getTrackbarPos('lower ' + key, 'binary')
+        lower[key] = cv2.getTrackbarPos(key + '_min', 'sliders')
 
     _, img = cam.read()
     raw = cv2.flip(img, 1)
@@ -36,8 +37,8 @@ while True:
     hsv = cv2.GaussianBlur(raw, (5, 5), 0)
     hsv = cv2.cvtColor(hsv, cv2.COLOR_BGR2HSV)
 
-    up = np.array([upper['r'], upper['g'], upper['b']], np.uint8)
-    lo = np.array([lower['r'], lower['g'], lower['b']], np.uint8)
+    up = np.array([upper['h'], upper['s'], upper['v']], np.uint8)
+    lo = np.array([lower['h'], lower['s'], lower['v']], np.uint8)
     binary = cv2.inRange(hsv, lo, up)
 
     cv2.imshow('hsv', hsv)

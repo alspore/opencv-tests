@@ -8,6 +8,7 @@ orb = cv2.ORB()
 
 while True:
     ret, frame = cap.read()
+    frame = cv2.flip(frame, 1)
 
     kp = orb.detect(frame, None)
 

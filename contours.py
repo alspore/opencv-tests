@@ -21,7 +21,12 @@ while True:
     hsv = cv2.cvtColor(hsv, cv2.COLOR_BGR2HSV)
 
     binary = cv2.inRange(hsv, hand_color['min'], hand_color['max'])
-    binary = cv2.erode(binary, np.ones((5, 5), np.uint8), iterations = 1)
+    binary = cv2.erode(binary, np.ones((5, 5), np.uint8), iterations = 3)
+
+    ret, thresh = cv2.threshold(binary, 127, 255, 0)
+    cnt, hie = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    print(len(cnt))
+    cv2.drawContours(img, cnt, -1, (0, 255, 0), 3)
 
     cv2.imshow('img', img)
     cv2.imshow('binary', binary)
